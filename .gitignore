@@ -17,6 +17,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# CMake build directory
+build
+
 # =========================
 # Operating System Files
 # =========================
