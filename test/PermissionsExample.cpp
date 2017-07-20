@@ -18,10 +18,6 @@ TEST(Example, Permissions)
     administrators.push_back("adminstrators");
     administrators.push_back("*");
     administrators.push_back("*");
-    RuleInput grownUps;
-    grownUps.push_back("grownUps");
-    grownUps.push_back("pet");
-    grownUps.push_back("*");
     RuleInput dogOwners;
     dogOwners.push_back("dogOwners");
     dogOwners.push_back("*");
@@ -41,7 +37,6 @@ TEST(Example, Permissions)
 
     // Define the rules ...
     Rule adminsCanDoEverything(administrators, allow);
-    Rule grownUpsCanPetEverything(grownUps, allow);
     Rule dogOwnerCanAccessDogOnly(dogOwners, allow);
     Rule publicReadAccess(publicDirectoriesRead, allow);
     Rule denyEvertythingElse(catchAll, deny);
@@ -49,7 +44,6 @@ TEST(Example, Permissions)
     // and the decision table. Note the order matter...
     DecisionTable permissions;
     permissions.push_back(adminsCanDoEverything);
-    permissions.push_back(grownUpsCanPetEverything);
     permissions.push_back(dogOwnerCanAccessDogOnly);
     permissions.push_back(publicDirectoriesRead);
     permissions.push_back(denyEvertythingElse);
