@@ -7,10 +7,18 @@
 using namespace ::std;
 using namespace ::dectable;
 
-/// For convenience.
+/**
+ *  Create a vector<string> out of a string.
+ *
+ *  Format is <number of entries> [<entry> ...]
+ *
+ *  Provided for convenience.
+ *
+ *  @return a vector<string> so it can be turned to a dectable::RuleInput or
+ *  a dectable::RuleOutput. */
 vector<string> FromString(const string & str)
 {
-    RuleInput ruleIo;
+    RuleInput ruleIo;  // to force call to operator >>(istream &, RuleInput &).
     istringstream is(str);
     assert(is.good());
     is >> ruleIo;
@@ -24,21 +32,23 @@ TEST(Example, Permissions)
     RuleOutput allow(FromString("1 allow "));
     RuleOutput deny(FromString("1 deny "));
 
-    // In this case, the convention is for the rule input to be a triplet of:
+    // Here, the convention is for the rule input to be a triplet of:
     // role action subject
     //
-    // The number as a prefix indicate the number of values that follow.
+    // * is a configurable place holder that will match any value. This is
+    // what makes decision table shine; it provides flexibility to define
+    // rules.
     Rule adminsCanDoEverything(FromString("3 administrators * * "), allow);
     Rule dogOwnerCanAccessDogOnly(FromString("3 dogOwners * dog "), allow);
     Rule publicReadAccess(FromString("3 * read public "), allow);
-    Rule denyEvertythingElse(FromString("3 * * * "), deny);
+    Rule denyEverythingElse(FromString("3 * * * "), deny);
 
     // and the decision table. Note the order matter...
     DecisionTable permissions;
     permissions.push_back(adminsCanDoEverything);
     permissions.push_back(dogOwnerCanAccessDogOnly);
     permissions.push_back(publicReadAccess);
-    permissions.push_back(denyEvertythingElse);
+    permissions.push_back(denyEverythingElse);
 
     // Usage:
     RuleInput dogOwnerToPetDog(FromString("3 dogOwners pet dog "));
