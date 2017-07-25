@@ -1,3 +1,5 @@
+/** Copyright (c) 2017 elmotec. See LICENSE */
+
 #include "dectable/DecisionTable.h"
 #include <algorithm>
 #include <cassert>

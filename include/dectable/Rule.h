@@ -1,6 +1,8 @@
 #ifndef INC_RULE_H_AOX9VTDR
 #define INC_RULE_H_AOX9VTDR
 
+/** Copyright (c) 2017 elmotec. See LICENSE */
+
 #include <vector>
 #include <string>
 #include <iosfwd>

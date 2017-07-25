@@ -1,3 +1,4 @@
+# Copyright (c) 2017 elmotec. See LICENSE
 # The extension is already found. Any number of sources could be listed here.
 file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 add_library (${PROJECT_NAME} ${SRC_FILES})

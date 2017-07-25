@@ -1,3 +1,5 @@
+/** Copyright (c) 2017 elmotec. See LICENSE */
+
 #include "gtest/gtest.h"
 
 int main(int argc, char ** argv)

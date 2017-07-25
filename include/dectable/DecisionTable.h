@@ -1,6 +1,8 @@
 #ifndef INC_DECTABLE_H_DWBO4EHS
 #define INC_DECTABLE_H_DWBO4EHS
 
+/** Copyright (c) 2017 elmotec. See LICENSE */
+
 #include <vector>
 #include <string>
 #include <iosfwd>
