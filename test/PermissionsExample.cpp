@@ -45,7 +45,7 @@ TEST(Example, Permissions)
     DecisionTable permissions;
     permissions.push_back(adminsCanDoEverything);
     permissions.push_back(dogOwnerCanAccessDogOnly);
-    permissions.push_back(publicDirectoriesRead);
+    permissions.push_back(publicReadAccess);
     permissions.push_back(denyEvertythingElse);
 
     // Usage:
@@ -53,9 +53,9 @@ TEST(Example, Permissions)
     powerUserWantsToPetDog.push_back("dogOwners");
     powerUserWantsToPetDog.push_back("pet");
     powerUserWantsToPetDog.push_back("dog");
-    DecisionTable::const_iterator puIt = find(permissions.begin(),
-                                              permissions.end(),
-                                              powerUserWantsToPetDog);
+    DecisionTable::const_iterator puIt = FindFirstMatch(permissions.begin(),
+                                                        permissions.end(),
+                                                        powerUserWantsToPetDog);
     assert(puIt != permissions.end());
     string puOutput = puIt->GetOutput()[0];
     ASSERT_EQ(puOutput, "allow");
@@ -64,9 +64,9 @@ TEST(Example, Permissions)
     userWantsToFeedFish.push_back("kid");
     userWantsToFeedFish.push_back("feed");
     userWantsToFeedFish.push_back("fish");
-    DecisionTable::const_iterator uIt = find(permissions.begin(),
-                                             permissions.end(),
-                                             userWantsToFeedFish);
+    DecisionTable::const_iterator uIt = FindFirstMatch(permissions.begin(),
+                                                       permissions.end(),
+                                                       userWantsToFeedFish);
     assert(uIt != permissions.end());
     string uOutput = uIt->GetOutput()[0];
     ASSERT_EQ(uOutput, "deny");

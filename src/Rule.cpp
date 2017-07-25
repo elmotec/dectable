@@ -1,8 +1,11 @@
 #include "dectable/Rule.h"
 #include <cassert>
+#include <iostream>
 
 namespace dectable
 {
+
+    using namespace ::std;
 
     /** Defaults:
      *
@@ -25,50 +28,73 @@ namespace dectable
         : input_(input), output_(output)
     {}
 
-    Rule::Rule(const RuleInput & input)
-        : input_(input)
-
-    {}
-
     Rule::~Rule()
     {}
 
-    const RuleOutput & Rule::GetOutput() const
-    {
-        return output_;
-    }
-
-    /** Find out if there is a match between the 2 rule inputs.
-     *
-     *  Loops through the input fields. If any difference is found,
-     *  other than the RuleConfiguration::matchAny special string,
-     *  returnfalse.
-     *
-     *  Otherwise return true, meaning we found a match.
-     *
-     *  Note that the Rule is ordered so std::find will return the first
-     *  rule for which there is a match.
-     *
-     *  */
     bool Rule::operator==(const Rule & other) const
     {
-        const RuleConfiguration & config = Rule::Configuration();
-        assert(input_.size() == other.input_.size());
-        for (size_t ii = 0; ii < input_.size(); ++ii)
-        {
-            if (input_[ii] != config.matchAny &&
-                    other.input_[ii] != config.matchAny && 
-                    input_[ii] != other.input_[ii])
-            {
-                return false;
-            }
-        }
-        return true;
+        return input_ == other.input_ && output_ == other.output_;
     }
 
     bool Rule::operator!=(const Rule & other) const
     {
         return ! (*this == other);
+    }
+
+    istream & operator >> (istream & is, vector<string> & vec)
+    {
+        if (! is.good())
+        {
+            return is;
+        }
+        size_t size = 0;
+        is >> size;
+        if (! is.good())
+        {
+            return is;
+        }
+        vec.resize(size);
+        for (size_t ii = 0; ii < vec.size(); ++ii)
+        {
+            if (is.good())
+            {
+                is >> vec[ii];
+            }
+        }
+        return is;
+    }
+
+    ostream & operator << (ostream & os, const vector<string> & vec)
+    {
+        size_t vecSize = vec.size();
+        os << vecSize << " ";
+        for (size_t ii = 0; ii < vecSize; ++ii)
+        {
+            os << vec[ii];
+            if (ii < vecSize - 1)
+                os << " ";
+        }
+        return os;
+    }
+
+    istream & operator >> (istream & is, Rule & rule)
+    {
+        if (is.good())
+        {
+            is >> rule.input_;
+            is >> rule.output_;
+        }
+        return is;
+    }
+
+    ostream & operator << (ostream & os, const Rule & rule)
+    {
+        if (os.good())
+        {
+            os << rule.input_ << " ";
+            os << rule.output_;
+        }
+        return os;
     }
 
 } /* dectable */ 

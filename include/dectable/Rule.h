@@ -3,12 +3,18 @@
 
 #include <vector>
 #include <string>
+#include <iosfwd>
 
 namespace dectable
 {
 
     typedef std::vector<std::string> RuleInput;
     typedef std::vector<std::string> RuleOutput;
+
+    /// Input operator for RuleInput and RuleOutput. dectable specific.
+    std::istream & operator >> (std::istream &, std::vector<std::string> &);
+    /// Output operator for RuleInput and RuleOutput. dectable specific.
+    std::ostream & operator << (std::ostream &, const std::vector<std::string> &);
 
     /** @brief Configuration for rule matching. */
     class RuleConfiguration
@@ -37,8 +43,6 @@ namespace dectable
     {
     public:
         Rule ();
-        /// Useful to compare a RuleInput to the rules in a table.
-        Rule (const RuleInput & input);
         /// Instances of Rule will be built off this constructor.
         Rule (const RuleInput & input, const RuleOutput & output);
         virtual ~Rule ();
@@ -46,15 +50,32 @@ namespace dectable
         /// Access to the Rule configuration.
         static RuleConfiguration & Configuration();
 
+        /// Compare the definition of the rule. True if rules are identical.
         bool operator==(const Rule &) const;
+        /// Compare the definition of the rule. True if rules are different.
         bool operator!=(const Rule &) const;
 
-        const RuleOutput & GetOutput() const;
+        const RuleOutput & GetOutput() const
+        { return output_; }
+        void SetOutput(const RuleOutput & ruleOutput)
+        { output_ = ruleOutput; }
+        const RuleOutput & GetInput() const
+        { return input_; }
+        void SetInput(const RuleInput & ruleInput)
+        { input_ = ruleInput; }
+
+        friend std::istream & operator >> (std::istream &, Rule &);
+        friend std::ostream & operator << (std::ostream &, const Rule &);
 
     private:
         RuleInput input_;
         RuleOutput output_;
     };
+
+    /// Input operator for Rule.
+    std::istream & operator >> (std::istream &, Rule &);
+    /// Output operator for Rule.
+    std::ostream & operator << (std::ostream &, const Rule &);
 
 } /* dectable */ 
 
