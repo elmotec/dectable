@@ -12,7 +12,7 @@ Clone the repository then run from the top of the tree:
 ```
 mkdir build
 cd build
-cmake -D:TEST=1 .. # Remove -D:TEST=1 if you only want to build the lib.
+cmake -D TEST=1 .. # Remove -D TEST=1 if you only want to build the lib.
 make all
 make test  # optional
 ```
