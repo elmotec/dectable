@@ -99,7 +99,8 @@ namespace dectable
     DecisionTable::const_iterator FindFirstMatch(DecisionTable::const_iterator begin, DecisionTable::const_iterator end, const RuleInput & candidate)
     {
         Matcher isMatch(candidate);
-        return std::find_if(begin, end, isMatch);
+        DecisionTable::const_iterator it = std::find_if(begin, end, isMatch);
+        return it;
     }
 
 }  // dectable

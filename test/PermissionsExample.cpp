@@ -1,45 +1,37 @@
 #include "gtest/gtest.h"
 #include <algorithm>
+#include <sstream>
 #include "dectable/DecisionTable.h"
 
 
 using namespace ::std;
 using namespace ::dectable;
 
+/// For convenience.
+vector<string> FromString(const string & str)
+{
+    RuleInput ruleIo;
+    istringstream is(str);
+    assert(is.good());
+    is >> ruleIo;
+    assert(is.good());  // FIXME: requires str to end with a space.
+    return ruleIo;
+}
 
 TEST(Example, Permissions)
 {
-    // In this case, the convention is for the rule input to be a triplet of:
-    // role, action, subject
-    //
-    // The setup is a little laborious but can be eased using more recent 
-    // version of C++, boost, or file input.
-    RuleInput administrators;
-    administrators.push_back("adminstrators");
-    administrators.push_back("*");
-    administrators.push_back("*");
-    RuleInput dogOwners;
-    dogOwners.push_back("dogOwners");
-    dogOwners.push_back("*");
-    dogOwners.push_back("dog");
-    RuleInput publicDirectoriesRead;
-    publicDirectoriesRead.push_back("*");
-    publicDirectoriesRead.push_back("read");
-    publicDirectoriesRead.push_back("public");
-    RuleInput catchAll;
-    catchAll.push_back("*");
-    catchAll.push_back("*");
-    catchAll.push_back("*");
-
     // The rule output is very simple: allow or deny.
-    RuleOutput allow(1, "allow");
-    RuleOutput deny(1, "deny");
+    RuleOutput allow(FromString("1 allow "));
+    RuleOutput deny(FromString("1 deny "));
 
-    // Define the rules ...
-    Rule adminsCanDoEverything(administrators, allow);
-    Rule dogOwnerCanAccessDogOnly(dogOwners, allow);
-    Rule publicReadAccess(publicDirectoriesRead, allow);
-    Rule denyEvertythingElse(catchAll, deny);
+    // In this case, the convention is for the rule input to be a triplet of:
+    // role action subject
+    //
+    // The number as a prefix indicate the number of values that follow.
+    Rule adminsCanDoEverything(FromString("3 administrators * * "), allow);
+    Rule dogOwnerCanAccessDogOnly(FromString("3 dogOwners * dog "), allow);
+    Rule publicReadAccess(FromString("3 * read public "), allow);
+    Rule denyEvertythingElse(FromString("3 * * * "), deny);
 
     // and the decision table. Note the order matter...
     DecisionTable permissions;
@@ -49,25 +41,18 @@ TEST(Example, Permissions)
     permissions.push_back(denyEvertythingElse);
 
     // Usage:
-    RuleInput powerUserWantsToPetDog;
-    powerUserWantsToPetDog.push_back("dogOwners");
-    powerUserWantsToPetDog.push_back("pet");
-    powerUserWantsToPetDog.push_back("dog");
-    DecisionTable::const_iterator puIt = FindFirstMatch(permissions.begin(),
-                                                        permissions.end(),
-                                                        powerUserWantsToPetDog);
-    assert(puIt != permissions.end());
-    string puOutput = puIt->GetOutput()[0];
-    ASSERT_EQ(puOutput, "allow");
+    RuleInput dogOwnerToPetDog(FromString("3 dogOwners pet dog "));
+    ASSERT_EQ(FindFirstMatch(permissions.begin(), permissions.end(),
+                             dogOwnerToPetDog)->GetOutput(),
+              allow);
 
-    RuleInput userWantsToFeedFish;
-    userWantsToFeedFish.push_back("kid");
-    userWantsToFeedFish.push_back("feed");
-    userWantsToFeedFish.push_back("fish");
-    DecisionTable::const_iterator uIt = FindFirstMatch(permissions.begin(),
-                                                       permissions.end(),
-                                                       userWantsToFeedFish);
-    assert(uIt != permissions.end());
-    string uOutput = uIt->GetOutput()[0];
-    ASSERT_EQ(uOutput, "deny");
+    RuleInput userToFeedFish(FromString("3 users feed fish "));
+    ASSERT_EQ(FindFirstMatch(permissions.begin(), permissions.end(),
+                             userToFeedFish)->GetOutput(),
+              deny);
+
+    RuleInput adminToFeedFish(FromString("3 administrators feed fish "));
+    ASSERT_EQ(FindFirstMatch(permissions.begin(), permissions.end(),
+                             adminToFeedFish)->GetOutput(),
+              allow);
 }
